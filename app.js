@@ -6,6 +6,7 @@ const cors = require('cors');
 const PORT = process.env.PORT || 5000;
 const authRoutes = require('./routes/auth');
 const servicesRoutes = require('./routes/services');
+const bidsRoutes = require('./routes/bids');
 
 const app = express();
 app.use(cors());
@@ -13,6 +14,7 @@ app.use(bodyParser.json());
 
 app.use('/auth', authRoutes);
 app.use('/services', servicesRoutes);
+app.use('/bids', bidsRoutes);
 
 app.get("/",(req,res)=>{
   res.send("Hi, Welcome to service provider  ");

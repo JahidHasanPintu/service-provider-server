@@ -1,9 +1,9 @@
-// routes/schools.js
+
 const express = require('express');
 const router = express.Router();
 const Service = require('../models/services');
 
-// Create a new school
+// Create a new service
 router.post('/create', async (req, res) => {
     try {
         const {
@@ -33,106 +33,100 @@ router.post('/create', async (req, res) => {
     }
 });
 
-// GET all schools with pagination, searching, and filtering
+// GET all service with pagination, searching, and filtering
 router.get('/', async (req, res) => {
     try {
-      const { page = 1, limit = 10, search, filterType, filterLevel, filterDivision } = req.query;
+      const { page = 1, limit = 10, search, filterType, filterSkills} = req.query;
       const skip = (page - 1) * limit;
   
       const query = {};
   
       if (search) {
         const orConditions = [
-          { DISTRICT_NAME: { $regex: new RegExp(search, 'i') } },
-          { THANA_NAME: { $regex: new RegExp(search, 'i') } },
-          { INSTITUTE_NAME_NEW: { $regex: new RegExp(search, 'i') } },
-          { LOCATION: { $regex: new RegExp(search, 'i') } },
+          { TITLE: { $regex: new RegExp(search, 'i') } },
+          { TYPE: { $regex: new RegExp(search, 'i') } },
+          { SKILLS: { $regex: new RegExp(search, 'i') } },
+          { DESCRIPTION: { $regex: new RegExp(search, 'i') } },
         ];
       
-        // Check if search is a valid number and then apply to EIIN field
-        if (!isNaN(search)) {
-          orConditions.push({ EIIN: search });
-        }
       
         query.$or = orConditions;
       }
   
       if (filterType) {
-        query.TYP = filterType;
+        query.TYPE = filterType;
       }
   
-      if (filterLevel) {
-        query.LVL = filterLevel;
+      if (filterSkills) {
+        query.SKILLS = filterSkills;
       }
   
-      if (filterDivision) {
-        query.DIVISION_NAME = filterDivision;
-      }
   
-      const schools = await School.find(query)
+      const services = await Service.find(query)
         .skip(skip)
-        .limit(limit);
+        .limit(limit)
+        .populate('USER_ID', 'name');
   
-      const totalSchools = await School.countDocuments(query);
+      const totalServices = await Service.countDocuments(query);
   
       res.json({
         currentPage: page,
-        totalPages: Math.ceil(totalSchools / limit),
-        totalSchools: totalSchools, // Total schools in the database
-        schoolsOnCurrentPage: schools.length,
-        schools,
+        totalPages: Math.ceil(totalServices / limit),
+        totalServices: totalServices, // Total Services in the database
+        servicesOnCurrentPage: services.length,
+        services,
       });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   });
 
-// Delete a school by school ID
-router.delete('/:schoolId', async (req, res) => {
+// Delete a Service by Service ID
+router.delete('/:serviceId', async (req, res) => {
     try {
-        const { schoolId } = req.params;
-        const deletedSchool = await School.findByIdAndDelete(schoolId);
-        if (!deletedSchool) {
-            return res.status(404).json({ message: 'School not found' });
+        const { serviceId } = req.params;
+        const deletedService = await Service.findByIdAndDelete(serviceId);
+        if (!deletedService) {
+            return res.status(404).json({ message: 'Service not found' });
         }
-        res.json({ message: 'School deleted successfully' });
+        res.json({ message: 'Service deleted successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
-// Update a school by school ID
-router.put('/:schoolId', async (req, res) => {
+// Update a Service by Service ID
+router.put('/:serviceId', async (req, res) => {
     try {
-        const { schoolId } = req.params;
+        const { serviceId } = req.params;
         const updatedFields = req.body; // Get all the fields to update from the request body
 
-        const updatedSchool = await School.findByIdAndUpdate(
-            schoolId,
+        const updatedService = await Service.findByIdAndUpdate(
+            serviceId,
             { $set: updatedFields }, // Use $set to update only the provided fields
             { new: true }
         );
 
-        if (!updatedSchool) {
-            return res.status(404).json({ message: 'School not found' });
+        if (!updatedService) {
+            return res.status(404).json({ message: 'Service not found' });
         }
 
-        res.json({ message: 'School updated successfully', school: updatedSchool });
+        res.json({ message: 'Service updated successfully', service: updatedService });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
 
-// View a single school by school ID
-router.get('/:schoolId', async (req, res) => {
+// View a single Service by Service ID
+router.get('/:serviceId', async (req, res) => {
     try {
-        const { schoolId } = req.params;
-        const school = await School.findById(schoolId);
-        if (!school) {
-            return res.status(404).json({ message: 'School not found' });
+        const { serviceId } = req.params;
+        const Service = await Service.findById(serviceId);
+        if (!Service) {
+            return res.status(404).json({ message: 'Service not found' });
         }
-        res.json({ school });
+        res.json({ Service });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
