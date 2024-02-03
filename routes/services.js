@@ -36,7 +36,7 @@ router.post('/create', async (req, res) => {
 // GET all service with pagination, searching, and filtering
 router.get('/', async (req, res) => {
     try {
-      const { page = 1, limit = 10, search, filterType, filterSkills} = req.query;
+      const { page = 1, limit = 100, search, filterType, filterSkills} = req.query;
       const skip = (page - 1) * limit;
   
       const query = {};

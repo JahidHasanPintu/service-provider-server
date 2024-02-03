@@ -176,5 +176,27 @@ router.get('/bidsbyuser/:userId', async (req, res) => {
   }
 });
 
+// Route for deleting a bid by ID
+router.delete('/delete/:bidId', async (req, res) => {
+  try {
+    const bidId = req.params.bidId;
+
+    // Check if the bid exists
+    const bid = await Bids.findById(bidId);
+    if (!bid) {
+      return res.status(404).json({ message: 'Bid not found' });
+    }
+
+    // Delete the bid
+    await Bids.findByIdAndDelete(bidId);
+
+    res.status(200).json({ message: 'Bid deleted successfully' });
+  } catch (error) {
+    // Handling errors
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 
 module.exports = router;
