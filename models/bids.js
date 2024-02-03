@@ -9,6 +9,10 @@ const bidsSchema = new Schema({
   },
   SERVICE_ID: String,
   DETAILS: String,
+  STATUS: {
+    type:String,
+    default:"pending"
+  },
   createdAt: {
     type: Date,
     default: Date.now // Automatically set to the current timestamp

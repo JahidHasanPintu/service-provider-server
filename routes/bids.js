@@ -132,5 +132,49 @@ router.post('/create', async (req, res) => {
   }
 });
 
+// Route for updating the status of a bid
+router.put('/update/:bidId', async (req, res) => {
+  try {
+    const bidId = req.params.bidId;
+    const { status } = req.body;
+
+    // Check if the bid exists
+    const bid = await Bids.findById(bidId);
+    if (!bid) {
+      return res.status(404).json({ message: 'Bid not found' });
+    }
+
+    // Update the status of the bid
+    bid.STATUS = status || bid.STATUS;
+
+    // Save the updated bid
+    await bid.save();
+
+    res.status(200).json({ message: 'Bid status updated successfully', bid });
+  } catch (error) {
+    // Handling errors
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Route for fetching all bids by USER_ID
+router.get('/bidsbyuser/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Find all bids by USER_ID
+    const bids = await Bids.find({ USER_ID: userId })
+      .sort({ createdAt: -1 }) // Sort by creation date, descending
+      .exec();
+
+    res.status(200).json(bids);
+  } catch (error) {
+    // Handling errors
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 
 module.exports = router;
