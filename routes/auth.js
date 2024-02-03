@@ -44,4 +44,88 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// GET all products with pagination, searching, and filtering
+router.get('/users', async (req, res) => {
+  try {
+      const { page, limit, search, filterRole } = req.query;
+      const skip = (page - 1) * limit;
+
+      const query = {};
+
+      if (search) {
+          const orConditions = [
+              { email: { $regex: new RegExp(search, 'i') } },
+              { name: { $regex: new RegExp(search, 'i') } },
+              { phone: { $regex: new RegExp(search, 'i') } },
+          ];
+
+          query.$or = orConditions;
+      }
+
+      if (filterRole) {
+          query.role = filterRole;
+      }
+
+      const users = await User.find(query)
+          .skip(skip)
+          .limit(limit); // Populate the 'USER_ID' field with 'name' from the User model
+
+      const totalUsers = await User.countDocuments(query);
+
+      res.json({
+          success: "true",
+          currentPage: page,
+          totalPages: Math.ceil(totalUsers / limit),
+          totalItem: totalUsers,
+          usersOnCurrentPage: users.length,
+          users,
+      });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+
+router.put('/update/:userId', async (req, res) => {
+  try {
+      const { email, name, password, phone, address, role } = req.body;
+      const updatedUser = await User.findByIdAndUpdate(
+          req.params.userId,
+          {
+              $set: {
+                  email,
+                  name,
+                  password,
+                  phone,
+                  address,
+                  role,
+              },
+          },
+          { new: true }
+      );
+
+      if (!updatedUser) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.json({ message: 'User updated successfully', user: updatedUser });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+
+
+router.delete('/delete/:userId', async (req, res) => {
+  try {
+      const deletedUser = await User.findByIdAndDelete(req.params.userId);
+
+      if (!deletedUser) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.status(200).json({ message: 'User deleted successfully', deletedUser });
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;

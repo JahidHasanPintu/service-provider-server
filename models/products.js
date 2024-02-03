@@ -15,7 +15,7 @@ const productSchema = new Schema({
   description: String, 
   createdAt: {
     type: Date,
-    default: Date.now, // Automatically set to the current timestamp
+    default: Date.now,
   },
 });
 
