@@ -2,6 +2,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+
 const orderSchema = new Schema({
   userID: {
     type: mongoose.Schema.Types.ObjectId,
@@ -11,7 +12,19 @@ const orderSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product',
   },
-  quantity: String,
+  shippingCharge: String,
+  subtotal: String,
+  total: String,
+  notes: String,
+  shippingAddress: { // Update to object type
+    phone: String,
+    email: String,
+    address: String,
+    division: String,
+    city: String,
+    upazila: String,
+    zipcode: String
+  },
   paymentMethod: String,
   paymentStatus: String,
   orderStatus: { type: String, default: "pending" },
