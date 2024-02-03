@@ -132,4 +132,22 @@ router.get('/:serviceId', async (req, res) => {
     }
 });
 
+// Route for fetching all services by a user
+router.get('/servicebyuser/:userId', async (req, res) => {
+    try {
+      const userId = req.params.userId;
+  
+      // Find all services belonging to the user
+      const services = await Service.find({ USER_ID: userId })
+        .sort({ createdAt: -1 }) // Sort by creation date, descending
+        .exec();
+  
+      res.status(200).json(services);
+    } catch (error) {
+      // Handling errors
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+
 module.exports = router;
