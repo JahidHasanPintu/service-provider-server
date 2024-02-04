@@ -70,6 +70,7 @@ router.get('/', async (req, res) => {
       const totalServices = await Service.countDocuments(query);
   
       res.json({
+        success: true,
         currentPage: page,
         totalPages: Math.ceil(totalServices / limit),
         totalServices: totalServices, // Total Services in the database
