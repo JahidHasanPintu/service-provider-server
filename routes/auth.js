@@ -44,7 +44,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// GET all products with pagination, searching, and filtering
 router.get('/users', async (req, res) => {
   try {
       const { page, limit, search, filterRole } = req.query;
@@ -87,17 +86,16 @@ router.get('/users', async (req, res) => {
 
 router.put('/update/:userId', async (req, res) => {
   try {
-      const { email, name, password, phone, address, role } = req.body;
+      const { email, name, password, phone, address } = req.body;
       const updatedUser = await User.findByIdAndUpdate(
           req.params.userId,
           {
               $set: {
                   email,
                   name,
-                  password,
                   phone,
                   address,
-                  role,
+                  
               },
           },
           { new: true }
