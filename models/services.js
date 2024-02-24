@@ -13,6 +13,7 @@ const serviceSchema = new Schema({
   EXPERIENCE: String,
   TYPE: String,
   SKILLS: String,
+  LOCATION: String,
   DESCRIPTION: String,
   createdAt: {
     type: Date,

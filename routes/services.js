@@ -18,6 +18,7 @@ router.post('/create', async (req, res) => {
             EXPERIENCE,
             TYPE,
             SKILLS,
+            LOCATION,
             DESCRIPTION,
         } = req.body;
         const service = new Service({
@@ -28,6 +29,7 @@ router.post('/create', async (req, res) => {
             EXPERIENCE,
             TYPE,
             SKILLS,
+            LOCATION,
             DESCRIPTION,
         });
         await service.save();
@@ -50,7 +52,7 @@ router.get('/', async (req, res) => {
           { TITLE: { $regex: new RegExp(search, 'i') } },
           { TYPE: { $regex: new RegExp(search, 'i') } },
           { SKILLS: { $regex: new RegExp(search, 'i') } },
-          { DESCRIPTION: { $regex: new RegExp(search, 'i') } },
+          { LOCATION: { $regex: new RegExp(search, 'i') } },
         ];
       
       
